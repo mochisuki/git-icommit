@@ -1,0 +1,50 @@
+#!/bin/bash
+
+CMDNAME="$(basename $0)"
+DEFAULT_MESSAGE="initial commit"
+
+message="${DEFAULT_MESSAGE}"
+
+usage_exit() {
+    cat <<HELP
+Usage: ${CMDNAME} [OPTION]...
+Create an empty Git repository and empty commit.
+
+[OPTION]
+    -m <msg>     Use the given <msg> as the INITIAL commit message.
+    -h           Display this help and exit.
+HELP
+
+    exit 1;
+}
+
+initial_empty_commit() {
+    git init
+    git commit --allow-empty -m "${message}"
+}
+
+
+if [ -e $(pwd)/.git ]; then
+    echo ".git directory is already exists."
+    exit 1;
+fi
+
+if [ $# -ne 0 ]; then
+    usage_exit
+fi
+
+
+while getopts ":m:h" OPT; do
+    case "${OPT}" in
+        m)
+            message="${OPTARG}"
+            ;;
+        h | *)
+            usage_exit
+            ;;
+    esac
+done
+
+initial_empty_commit
+
+exit 0;
